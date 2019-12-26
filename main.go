@@ -1,21 +1,32 @@
 package main
 
 import(
-	"fmt"
-	"os/exec"
-	"strings"
+	// "fmt"
+	 "os"
+	// "strings"
+	"transform"
+	"io"
 
 )
+
+
 func main(){
-	// https://github.com/fogleman/primitive
-	// the exec package takes two parameters the  command (here "primitive") and  the parameters
-	cmd:=exec.Command("primitive", strings.Fields("-i input.png -o output.png -n 50 -m 6")...)
-	b,err:=cmd.CombinedOutput()
-	// b is the output and err is the error(if present) 
+	inFile,err:=os.Open("input.png")
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(string(b))
+	defer inFile.Close()
+	out,err:=primitive.Transform(inFile,50)
+	// out is the output and err is the error(if present) 
+	if err != nil {
+		panic(err)
+	}
+	os.Remove("out.png")
+	outFile,err:=os.Create("out.png")
+	if err != nil {
+		panic(err)
+	}
+	io.Copy(outFile,out)
 
 
 }
