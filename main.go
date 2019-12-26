@@ -32,14 +32,22 @@ func main(){
 			return
 		}
 		defer file.Close()
-		ext:=filepath.Ext(header.Filename)
+		ext:=filepath.Ext(header.Filename)[1:] /* this excludes the . in the
+		name extension say ".png" */
 		_=ext
 		out,err:=primitive.Transform(file,50)
-		if err != nil {
-			http.Error(w,err.Error(),http.StatusInternalServerError)
+		switch ext{
+		case "jpg":
+			fallthrough
+		case "jpeg":
+			w.Header().Set("Content-type","image/jpeg")
+		case "png":
+			w.Header().Set("Content-type","image/png")
+		default:
+			http.Error(w,fmt.Sprintf("invalid image type %s",ext),http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("Content-type","image/png")
+		// w.Header().Set("Content-type","image/png")
 		io.Copy(w,out)
 		
 	})
