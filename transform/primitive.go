@@ -69,3 +69,11 @@ func primitive(inputFile,outputFile string,numShapes int, modes PrimitiveMode)(s
 
 
 }
+func tempfile(prefix, ext string) (*os.File, error) {
+	in, err := ioutil.TempFile("", "in_")
+	if err != nil {
+		return nil, errors.New("primitive: failed to create temporary file")
+	}
+	defer os.Remove(in.Name())
+	return os.Create(fmt.Sprintf("%s.%s", in.Name(), ext))
+}

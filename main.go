@@ -51,5 +51,7 @@ func main(){
 		io.Copy(w,out)
 		
 	})
+	fs:=http.FileServer(http.Dir("./img/"))
+	mux.Handle("/img/",http.StripPrefix("/img/",fs))
 	log.Fatal(http.ListenAndServe(":3000",mux))
 }
